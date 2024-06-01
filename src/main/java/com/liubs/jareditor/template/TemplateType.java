@@ -8,9 +8,9 @@ import java.util.Map;
  * @date 2024/5/14
  */
 public enum TemplateType {
-   JAVA_TEMPLATE("java","template/java.template",new JavaTextParser()),
-   CLASS_TEMPLATE("class","template/java.template",new JavaTextParser()),
-   XML_TEMPLATE("xml","template/xml.template", DefaultParser.INSTANCE),
+   JAVA_TEMPLATE("java", "main/resources/template/java.template",new JavaTextParser()),
+   CLASS_TEMPLATE("class", "main/resources/template/java.template",new JavaTextParser()),
+   XML_TEMPLATE("xml", "main/resources/template/xml.template", DefaultParser.INSTANCE),
 
 
 
