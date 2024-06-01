@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // Java support
@@ -29,7 +28,7 @@ repositories {
     jcenter()
 }
 dependencies {
-    implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.85")
+    implementation("org.jetbrains:intellij-fernflower:1.2.1.16")
 }
 
 
