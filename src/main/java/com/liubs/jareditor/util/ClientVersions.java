@@ -1,8 +1,7 @@
 package com.liubs.jareditor.util;
 
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManagerCore;
-import com.intellij.openapi.extensions.PluginId;
+import com.intellij.ide.plugins.cl.PluginAwareClassLoader;
+import com.intellij.openapi.extensions.PluginDescriptor;
 
 /**
  * @author Liubsyy
@@ -16,10 +15,12 @@ public class ClientVersions {
      */
     public static String getCurrentPluginVersion() {
         try{
-            PluginId pluginId = PluginId.getId("com.liubs.jaredit");
-            IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(pluginId);
-            if (plugin != null) {
-                return plugin.getVersion();
+            ClassLoader classLoader = ClientVersions.class.getClassLoader();
+            if (classLoader instanceof PluginAwareClassLoader) {
+                PluginDescriptor plugin = ((PluginAwareClassLoader) classLoader).getPluginDescriptor();
+                if (plugin != null) {
+                    return plugin.getVersion();
+                }
             }
         }catch (Throwable e) {
             e.printStackTrace();

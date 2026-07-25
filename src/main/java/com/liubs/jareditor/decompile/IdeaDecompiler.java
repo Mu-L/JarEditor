@@ -1,10 +1,8 @@
 package com.liubs.jareditor.decompile;
 
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManagerCore;
-import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.compiled.ClassFileDecompilers;
 
 import java.lang.reflect.Method;
 
@@ -53,11 +51,13 @@ public class IdeaDecompiler implements IDecompiler{
 
     private static ClassLoader getPluginClassLoader(){
         try{
-            IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(PluginId.getId("org.jetbrains.java.decompiler"));
-            if(null == plugin) {
-                return null;
-            }
-            return plugin.getPluginClassLoader();
+            ClassLoader[] classLoader = new ClassLoader[1];
+            ClassFileDecompilers.getInstance().EP_NAME.processWithPluginDescriptor((decompiler, plugin) -> {
+                if ("org.jetbrains.java.decompiler".equals(plugin.getPluginId().getIdString())) {
+                    classLoader[0] = plugin.getPluginClassLoader();
+                }
+            });
+            return classLoader[0];
         }catch (Throwable ex) {
             ex.printStackTrace();
         }
