@@ -1,10 +1,12 @@
 package com.liubs.jareditor.decompile;
 
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.compiled.ClassFileDecompilers;
 
 import java.lang.reflect.Method;
+import java.util.function.BiConsumer;
 
 /**
  * IDEA自带反编译器
@@ -52,11 +54,16 @@ public class IdeaDecompiler implements IDecompiler{
     private static ClassLoader getPluginClassLoader(){
         try{
             ClassLoader[] classLoader = new ClassLoader[1];
-            ClassFileDecompilers.getInstance().EP_NAME.processWithPluginDescriptor((decompiler, plugin) -> {
+            BiConsumer<ClassFileDecompilers.Decompiler, PluginDescriptor> processor = (decompiler, plugin) -> {
                 if ("org.jetbrains.java.decompiler".equals(plugin.getPluginId().getIdString())) {
                     classLoader[0] = plugin.getPluginClassLoader();
                 }
-            });
+            };
+            Object extensionPointName = ClassFileDecompilers.getInstance().EP_NAME;
+            // Declared on ExtensionPointName in 2020.3 and moved to its superclass in 2026.2.
+            Method processMethod = extensionPointName.getClass()
+                    .getMethod("processWithPluginDescriptor", BiConsumer.class);
+            processMethod.invoke(extensionPointName, processor);
             return classLoader[0];
         }catch (Throwable ex) {
             ex.printStackTrace();
